@@ -9,6 +9,7 @@
 namespace dlsys{
     namespace runtime{
         class CPUDeviceAPI:public DeviceAPI{
+            // CPU对数据进行操作，对DeviceAPI接口的实现
             public:
                 void *AllocDataSpace(DLContext ctx, size_t size, size_t alignment) final;
                 void FreeDataSpace(DLContext ctx, void *ptr) final;

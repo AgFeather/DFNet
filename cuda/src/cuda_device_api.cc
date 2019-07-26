@@ -3,6 +3,7 @@
 #include <cuda_runtime.h>
 #include <iostream>
 
+// 定义CUDA报错宏
 #define CUDA_CALL(func)                                                        \
   {                                                                            \
     cudaError_t e = (func);                                                    \
@@ -23,7 +24,7 @@ namespace dlsys {
 
         void *CUDADeviceAPI::AllocDataSpace(DLContext ctx, size_t size,
                                             size_t alignment) {
-            //std::cout << "allocating cuda data" << std::endl;
+            // 在CUDA上申请内存
             CUDA_CALL(cudaSetDevice(ctx.device_id));
             assert((256 % alignment) == 0U); // << "CUDA space is aligned at 256 bytes";
             void *ret;
@@ -32,16 +33,17 @@ namespace dlsys {
         }
 
         void CUDADeviceAPI::FreeDataSpace(DLContext ctx, void *ptr) {
-            //std::cout << "releasing cuda data" << std::endl;
+            // 释放CUDA内存
             CUDA_CALL(cudaSetDevice(ctx.device_id));
             CUDA_CALL(cudaFree(ptr));
         }
 
         void CUDADeviceAPI::CopyDataFromTo(const void *from, void *to, size_t size,
                                            DLContext ctx_from, DLContext ctx_to, DLStreamHandle stream) {
-            //std::cout << "copying cuda data" << std::endl;
+            // 数据复制
             cudaStream_t cu_stream = static_cast<cudaStream_t>(stream);
             if (ctx_from.device_type == kGPU && ctx_to.device_type == kGPU) {
+                // from 和 to 都是GPU上的内存时，直接调用CUDA的复制函数
                 CUDA_CALL(cudaSetDevice(ctx_from.device_id));
                 if (ctx_from.device_id == ctx_to.device_id) {
                     GPUCopy(from, to, size, cudaMemcpyDeviceToDevice, cu_stream);
@@ -50,9 +52,11 @@ namespace dlsys {
                                         size, cu_stream);
                 }
             } else if (ctx_from.device_type == kGPU && ctx_to.device_type == kCPU) {
+                // 数据从GPU复制到CPU上
                 CUDA_CALL(cudaSetDevice(ctx_from.device_id));
                 GPUCopy(from, to, size, cudaMemcpyDeviceToHost, cu_stream);
             } else if (ctx_from.device_type == kCPU && ctx_to.device_type == kGPU) {
+                // 数据从CPU复制到GPU上
                 CUDA_CALL(cudaSetDevice(ctx_to.device_id));
                 GPUCopy(from, to, size, cudaMemcpyHostToDevice, cu_stream);
             } else {

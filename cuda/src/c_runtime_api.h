@@ -21,13 +21,15 @@ DLSYS_EXTERN_C {
     int DLArrayFree(DLArrayHandle handle);
     int DLArrayCopyFromTo(DLArrayHandle from, DLArrayHandle to,
                       DLStreamHandle stream);
-    int DLGpuArraySet(DLArrayHandle arr, float value);
     int DLArrayReshape(const DLArrayHandle handle, const index_t *new_shape, index_t new_dim);
 
+    // GPU上的数组初始化
+    int DLGpuArraySet(DLArrayHandle arr, float value);
+    // GPU广播机制
     int DLGpuBroadcastTo(const DLArrayHandle input, DLArrayHandle output);
-
+    // 对第一个维度进行累加
     int DLGpuReduceSumAxisZero(const DLArrayHandle input, DLArrayHandle output);
-
+    // 矩阵对应元素相加
     int DLGpuMatrixElementwiseAdd(const DLArrayHandle matA,
                               const DLArrayHandle matB, DLArrayHandle output);
     int DLGpuMatrixElementwiseAddByConst(const DLArrayHandle input, float val,
@@ -47,19 +49,18 @@ DLSYS_EXTERN_C {
     int DLGpuMatrixElementwiseDivByConst(const DLArrayHandle matA, float val,
                                      DLArrayHandle output);
 
-
+    // 
     int DLGpuMatrixMultiply(const DLArrayHandle matA, bool transposeA,
                         const DLArrayHandle matB, bool transposeB,
                         DLArrayHandle matC);
-
+    // GPU ReLU
     int DLGpuRelu(const DLArrayHandle input, DLArrayHandle output);
-
+    // GPU 上对ReLU求导
     int DLGpuReluGradient(const DLArrayHandle input, const DLArrayHandle in_grad,
                       DLArrayHandle output);
-
+    // GPU softmax
     int DLGpuSoftmax(const DLArrayHandle input, DLArrayHandle output);
-
-
+    // GPU softmax交叉熵
     int DLGpuSoftmaxCrossEntropy(const DLArrayHandle input_a,
                              const DLArrayHandle input_b,
                              DLArrayHandle output);

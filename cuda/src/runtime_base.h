@@ -4,6 +4,7 @@
 #include "c_runtime_api.h"
 #include <stdexcept>
 
+// 定义对DeviceAPI的错误检查机制
 #define API_BEGIN() try {
 
 #define API_END()                                                              \

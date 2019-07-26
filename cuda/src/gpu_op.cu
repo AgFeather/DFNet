@@ -5,8 +5,7 @@
 #include <cuda_runtime.h>
 #include <math.h>
 
-/* TODO: Your code here */
-/* all your GPU kernel code, e.g. matrix_softmax_cross_entropy_kernel */
+
 
 // y = inputs[0], y_ = inputs[1]
 // np.mean(-np.sum(y_ * np.log(softmax(y)), axis=1), keepdims=True)
@@ -60,7 +59,8 @@ __global__ void array_set_kernel(float *array, float value, int n) {
 }
 
 
-int DLGpuArraySet(DLArrayHandle arr, float value) { /* TODO: Your code here */
+int DLGpuArraySet(DLArrayHandle arr, float value) {
+    // 对GPU上的一个arr赋值
     int n = 1;
     for (int i = 0; i < arr->ndim; i++) {
         n = n * arr->shape[i];
@@ -71,7 +71,7 @@ int DLGpuArraySet(DLArrayHandle arr, float value) { /* TODO: Your code here */
     int threads_per_block = 1024;
     int num_blocks = (n + threads_per_block - 1) / threads_per_block;
 
-    array_set_kernel << < num_blocks, threads_per_block >> > (array_data, value, n);
+    array_set_kernel <<< num_blocks, threads_per_block >>> (array_data, value, n);
     return 0;
 }
 
@@ -88,7 +88,7 @@ __global__ void broadcast_to_kernel(const float *input_data,
 
 
 int DLGpuBroadcastTo(const DLArrayHandle input, DLArrayHandle output) {
-    /* TODO: Your code here */
+    // GPU上广播机制
     index_t input_n = 1;
     for (int i = 0; i < input->ndim; i++)
         input_n *= input->shape[i];
@@ -118,7 +118,7 @@ __global__ void reduced_sum_axis_zero(const float *input_data, float *output_dat
 }
 
 int DLGpuReduceSumAxisZero(const DLArrayHandle input, DLArrayHandle output) {
-    /* TODO: Your code here */
+    // GPU reduceSum
     int input_n = 1;
     for (int i = 0; i < input->ndim; i++) {
         input_n *= input->shape[i];
@@ -149,7 +149,7 @@ __global__ void matrix_elementwise_add(const float *a, const float *b, float *c,
 
 int DLGpuMatrixElementwiseAdd(const DLArrayHandle matA,
                               const DLArrayHandle matB, DLArrayHandle output) {
-    /* TODO: Your code here */
+    // 矩阵对应元素相加
     int n = 1;
     for (int i = 0; i < output->ndim; i++) {
         n = n * output->shape[i];
@@ -166,8 +166,7 @@ int DLGpuMatrixElementwiseAdd(const DLArrayHandle matA,
     return 0;
 }
 
-__global__
-void matrix_elementwise_subtract(const float *a, const float *b, float *c,
+__global__ void matrix_elementwise_subtract(const float *a, const float *b, float *c,
                                  int n) {
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index < n) {
@@ -194,8 +193,7 @@ int DLGpuMatrixElementwiseSubtract(const DLArrayHandle matA,
     return 0;
 }
 
-__global__
-void matrix_elementwise_division(const float *a, const float *b, float *result, int n) {
+__global__ void matrix_elementwise_division(const float *a, const float *b, float *result, int n) {
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index < n) {
         result[index] = a[index] / b[index];
@@ -245,8 +243,7 @@ int DLGpuMatrixElementwiseAddByConst(const DLArrayHandle input, float val,
     return 0;
 }
 
-__global__
-void matrix_elementwise_subtract_by_const_kernal(const float *d_in,
+__global__ void matrix_elementwise_subtract_by_const_kernal(const float *d_in,
                                                  float *d_out, float val, int n) {
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index < n) {
@@ -326,8 +323,7 @@ int DLGpuMatrixElementwiseMultiply(const DLArrayHandle matA,
     return 0;
 }
 
-__global__
-void matrix_elementwise_sqrt(const float *d_input, float *d_output, int n) {
+__global__ void matrix_elementwise_sqrt(const float *d_input, float *d_output, int n) {
     int index = blockDim.x * blockIdx.x + threadIdx.x;
     if (index < n) {
         d_output[index] = sqrt(d_input[index]);

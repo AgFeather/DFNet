@@ -6,6 +6,7 @@ from pathlib import Path
 
 
 def _load_lib():
+	# 读取已经编译好的CUDA动态链接库
     lib_root = Path(__file__).parents[2]
     lib_path = os.path.join(lib_root, 'cuda/build/lib')
 
@@ -21,8 +22,10 @@ except:
 
 
 def check_call(ret):
+	# 检测调用是否成功
     assert ret == 0
 
 
 def c_array(ctype, values):
+	# 将tuple 或 list 转换成 c 数组形式
     return (ctype * len(values))(*values)

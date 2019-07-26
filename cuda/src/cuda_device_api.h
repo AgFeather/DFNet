@@ -12,6 +12,7 @@
 namespace dlsys {
     namespace runtime {
         class CUDADeviceAPI : public DeviceAPI{
+            // CUDA设备的数据操作API的实现
             public:
                 void *AllocDataSpace(DLContext ctx, size_t size, size_t alignment) final;
                 void FreeDataSpace(DLContext ctx, void *ptr) final;
